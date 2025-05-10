@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Студии MillyPhoto — лучшие фотолокации для съёмок, подобранные под ваш стиль и атмосферу." />
+    <meta name="keywords" content="фотостудия, студии, съёмка, MillyPhoto, локации" />
+    <meta name="author" content="MillyPhoto" />
+    <title>Мои студии — MillyPhoto</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-bg: #fff6f9;
+            --text-color: #4a3b52;
+            --accent-color: #f4dce6;
+            --hover-color: #faeaf0;
+            --font-title: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--main-bg);
+            font-family: var(--font-body);
+            color: var(--text-color);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            color: var(--text-color);
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        nav a:hover,
+        nav a.active-link {
+            background-color: var(--hover-color);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .burger div {
+            width: 24px;
+            height: 2px;
+            background-color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+                flex-direction: column;
+                gap: 1rem;
+                background: white;
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+            nav.active {
+                display: flex;
+            }
+
+            .burger {
+                display: flex;
+            }
+        }
+
+        main {
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .studio {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .studio:hover {
+            transform: translateY(-4px);
+        }
+
+        .studio img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .studio-title {
+            padding: 1rem;
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .empty {
+            text-align: center;
+            font-size: 1.2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .empty a {
+            color: #b06694;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">MillyPhoto</div>
+    <div class="burger">
+        <div></div><div></div><div></div>
+    </div>
+    <nav>
+        <a href="/">Мой подход</a>
+        <a href="/portfolio">Портфолио</a>
+        <a href="/studios" class="active-link">Мои студии</a>
+        <a href="/rental">Аренда одежды</a>
+        <a href="/booking">Запись</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Мои студии</h1>
+    <div id="studio-content"></div>
+</main>
+
+<script>
+    const burger = document.querySelector(".burger");
+    const nav = document.querySelector("nav");
+    burger.addEventListener("click", () => nav.classList.toggle("active"));
+
+    const studios = [
+        // пример: { title: "Loft #3", coverUrl: "https://..." }
+    ];
+
+    const content = document.getElementById("studio-content");
+
+    if (studios.length === 0) {
+        content.innerHTML = `
+        <div class="empty">
+          <p>Увы, у нас пока нет студий 😔<br>
+          Однако вы можете <a href="https://t.me/milly_sunny">написать нам</a>, и мы найдём наиболее подходящую для вас студию!</p>
+        </div>`;
+    } else {
+        const grid = document.createElement("div");
+        grid.className = "grid";
+        studios.forEach(studio => {
+            const el = document.createElement("div");
+            el.className = "studio";
+            el.innerHTML = `
+          <img src="${studio.coverUrl}" alt="${studio.title}" />
+          <div class="studio-title">${studio.title}</div>
+        `;
+            grid.appendChild(el);
+        });
+        content.appendChild(grid);
+    }
+</script>
+
+</body>
+</html>

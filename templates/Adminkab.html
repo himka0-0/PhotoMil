@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админ-панель — MillyPhoto</title>
+  <meta name="description" content="Управление контентом MillyPhoto — альбомы, студии, аренда одежды.">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg: #fff6f9;
+      --text-color: #4a3b52;
+      --accent-color: #f4dce6;
+      --hover-color: #faeaf0;
+      --font-title: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--main-bg);
+      font-family: var(--font-body);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .admin-panel {
+      background: white;
+      padding: 3rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .admin-panel h1 {
+      font-family: var(--font-title);
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-panel .links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .admin-panel .links a {
+      text-decoration: none;
+      background: var(--accent-color);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      color: var(--text-color);
+      transition: background 0.3s ease;
+    }
+
+    .admin-panel .links a:hover {
+      background: var(--hover-color);
+    }
+
+    @media (max-width: 500px) {
+      .admin-panel {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-panel">
+  <h1>Админ-панель</h1>
+  <div class="links">
+    <a href="/user/portfolios">Добавление / Удаление альбомов</a>
+    <a href="/user/studioss">Добавление / Удаление студий</a>
+    <a href="/user/rentals">Добавление / Удаление одежды</a>
+  </div>
+</div>
+
+</body>
+</html>

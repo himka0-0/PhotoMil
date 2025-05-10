@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход администратора — MillyPhoto</title>
+    <meta name="description" content="Авторизация администратора MillyPhoto — доступ только для сотрудников.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --main-bg: #fff6f9;
+            --text-color: #4a3b52;
+            --accent-color: #f4dce6;
+            --hover-color: #faeaf0;
+            --font-title: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--main-bg);
+            font-family: var(--font-body);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-color);
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            font-family: var(--font-title);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            padding: 0.9rem;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            background: #fdfcfd;
+            color: var(--text-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .note {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            color: #7a5c82;
+        }
+
+        .message {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: crimson;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h1>Вход администратора</h1>
+    <form id="admin-login-form">
+        <input type="email" id="email" placeholder="Email администратора" required />
+        <input type="password" id="password" placeholder="Пароль" required />
+        <button type="submit">Войти</button>
+    </form>
+    <div class="note">Только для сотрудников MillyPhoto</div>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const form = document.getElementById('admin-login-form');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        message.textContent = '';
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                message.style.color = 'green';
+                message.textContent = 'Успешный вход. Перенаправляем...';
+                setTimeout(() => window.location.href = '/user/cabinet', 1500);
+            } else {
+                message.textContent = result.error || 'Ошибка авторизации';
+            }
+        } catch (err) {
+            message.textContent = 'Сервер недоступен. Попробуйте позже.';
+        }
+    });
+</script>
+
+</body>
+</html>

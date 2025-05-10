@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Управление студиями — MillyPhoto</title>
+  <meta name="description" content="Добавление и удаление фотостудий в админке MillyPhoto">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg: #fff6f9;
+      --text-color: #4a3b52;
+      --accent-color: #f4dce6;
+      --hover-color: #faeaf0;
+      --font-title: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--main-bg);
+      font-family: var(--font-body);
+      color: var(--text-color);
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    header a {
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      font-weight: 600;
+      color: var(--text-color);
+      transition: background 0.3s ease;
+    }
+
+    header a:hover {
+      background: var(--hover-color);
+    }
+
+    header a.active {
+      background: var(--accent-color);
+    }
+
+    h1 {
+      text-align: center;
+      font-family: var(--font-title);
+      margin-bottom: 2rem;
+    }
+
+    .container {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .left,
+    .right {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      flex: 1 1 400px;
+      min-width: 300px;
+    }
+
+    .left h2,
+    .right h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      font-family: var(--font-title);
+    }
+
+    .studio-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      background: #fefefe;
+      margin-bottom: 0.8rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .delete-btn {
+      background: #ffdae0;
+      color: #6b2f3c;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .delete-btn:hover {
+      background: #ffcdd2;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: var(--accent-color);
+      border: none;
+      padding: 0.9rem;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--hover-color);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/user/cabinet">Главная</a>
+  <a href="/user/portfolios">Альбомы</a>
+  <a href="/user/studioss" class="active">Студии</a>
+  <a href="/user/rentals">Одежда</a>
+</header>
+
+<h1>Управление студиями</h1>
+
+<div class="container">
+  <div class="left">
+    <h2>Список студий</h2>
+    {{ if .alboms }}
+    {{ range .alboms }}
+    <div class="studio-item">
+      <span>{{ .Name }}</span>
+      <button class="delete-btn" onclick="deleteStudio({{ .ID }})">Удалить</button>
+    </div>
+    {{ end }}
+    {{ else }}
+    <p>Студий пока нет.</p>
+    {{ end }}
+  </div>
+
+  <div class="right">
+    <h2>Добавить студию</h2>
+    <form id="studio-form">
+      <input type="text" id="studio-name" placeholder="Название студии" required />
+      <input type="file" id="studio-photos" multiple accept="image/*" required />
+      <button type="submit">Добавить студию</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('studio-form');
+  const studioList = document.getElementById('studio-list');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('studio-name').value.trim();
+    const files = document.getElementById('studio-photos').files;
+
+    const formData = new FormData();
+    formData.append('name', name);
+    for (let file of files) {
+      formData.append('photos', file);
+    }
+
+    try {
+      const res = await fetch('/user/studioss', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await res.json();
+      if (res.ok && result.success) {
+        form.reset();
+        location.reload();
+      } else {
+        alert(result.error || 'Ошибка при добавлении');
+      }
+    } catch {
+      alert('Ошибка сервера');
+    }
+  });
+
+  async function loadStudios() {
+    studioList.innerHTML = '';
+    try {
+      const res = await fetch('/user/studioss');
+      const studios = await res.json();
+
+      if (!studios.length) {
+        studioList.innerHTML = '<p>Студий пока нет.</p>';
+        return;
+      }
+
+      studios.forEach(studio => {
+        const item = document.createElement('div');
+        item.className = 'studio-item';
+        item.innerHTML = `
+          <span>${studio.name}</span>
+          <button class="delete-btn" onclick="deleteStudio('${studio.id}')">Удалить</button>
+        `;
+        studioList.appendChild(item);
+      });
+    } catch {
+      studioList.innerHTML = '<p>Ошибка загрузки данных.</p>';
+    }
+  }
+
+  async function deleteStudio(id) {
+    if (!confirm('Удалить студию?')) return;
+
+    try {
+      const res = await fetch('/user/studioss', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+      });
+
+      if (res.ok) {
+        location.reload();
+      } else {
+        alert('Ошибка при удалении');
+      }
+    } catch {
+      alert('Ошибка сервера');
+    }
+  }
+
+  loadStudios();
+</script>
+
+</body>
+</html>
