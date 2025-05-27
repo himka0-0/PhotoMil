@@ -10,10 +10,7 @@ import (
 
 func Portfolio(c *gin.Context) {
 	var portfolios []models.Portfolio
-	if err := db.DB.
-		Preload("PortfolioPhoto").
-		Find(&portfolios).
-		Error; err != nil {
+	if err := db.DB.Preload("PortfolioPhoto").Find(&portfolios).Error; err != nil {
 		log.Println("Ошибка при получении портфолио:", err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "Не удалось загрузить портфолио",
@@ -36,7 +33,7 @@ func Portfolio(c *gin.Context) {
 			Photos: photos,
 		})
 	}
-	
+
 	c.HTML(http.StatusOK, "Portfolio.html", gin.H{
 		"Albums": albums,
 	})

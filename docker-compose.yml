@@ -1,0 +1,40 @@
+services:
+  app:
+    image: millyphoto:latest
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d ${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/nginx/sites-available:/etc/nginx/sites-available
+      - /etc/nginx/sites-enabled:/etc/nginx/sites-enabled
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - app
+
+
+volumes:
+  postgres_data:
